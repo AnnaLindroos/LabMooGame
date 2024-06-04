@@ -16,22 +16,28 @@ namespace MooGame
 
         public static void Main(string[] args)
         {
-
+            //Renamed from playOn to be more specific
             bool playGame = true;
             Console.WriteLine("Enter your user name:\n");
+            //Changed from "name" to userName for clarity
             string userName = Console.ReadLine();
 
             while (playGame)
             {
+                //Renamed to correctAnswer instead of makeGoal (small letter)
                 string correctAnswer = WinGame();
 
 
                 Console.WriteLine("New game:\n");
                 //comment out or remove next line to play real games!
                 //Console.WriteLine("For practice, number is: " + correctAnswer + "\n");
+
+                //Renamed to userGuess for clarity
                 string userGuess = Console.ReadLine();
 
+                //Renamed from nGuess for clarity
                 int numberOfGuesses = 1;
+                //Renamed from bbcc for clarity
                 string bullsAndCows = CheckBullsAndCows(correctAnswer, userGuess);
                 Console.WriteLine(bullsAndCows + "\n");
                 while (bullsAndCows != "BBBB,")
@@ -45,8 +51,10 @@ namespace MooGame
                 StreamWriter output = new StreamWriter("result.txt", append: true);
                 output.WriteLine(userName + "#&#" + numberOfGuesses);
                 output.Close();
-                showTopList();
+                //Renamed from showTopList for clarity
+                HighScore();
                 Console.WriteLine("Correct, it took " + numberOfGuesses + " guesses\nContinue?");
+                //renamed from answer for clarity
                 string keepPlaying = Console.ReadLine();
                 if (keepPlaying != null && keepPlaying != "" && keepPlaying.Substring(0, 1) == "n")
                 {
@@ -56,23 +64,29 @@ namespace MooGame
         }
         static string WinGame()
         {
+            //Renamed from randomGenerator
             Random randomNumbers = new Random();
-            string goal = "";
+            //Renamed from goal
+            string correctAnswer = "";
             // Magic number, change to a constant int called max.
             for (int i = 0; i < 4; i++)
             {
+                //Changed from random
                 int randomNumber = randomNumbers.Next(10);
-                string correctNumbers = "" + randomNumber;
-                while (goal.Contains(correctNumbers))
+                //Changedfrom randomDigit
+                string generatedNumberSequence = "" + randomNumber;
+                while (correctAnswer.Contains(generatedNumberSequence))
                 {
                     randomNumber = randomNumbers.Next(10);
-                    correctNumbers = "" + randomNumber;
+                    generatedNumberSequence = "" + randomNumber;
                 }
-                goal = goal + correctNumbers;
+                // shortened from correctAnswer = correctAnswer + generatedNumberSequence;
+                correctAnswer += generatedNumberSequence;
             }
-            return goal;
+            return correctAnswer;
         }
 
+        //Renamed from checkBC (small letter at the start) for clarity
         static string CheckBullsAndCows(string goal, string guess)
         {
             int cows = 0, bulls = 0;
@@ -97,8 +111,8 @@ namespace MooGame
             return "BBBB".Substring(0, bulls) + "," + "CCCC".Substring(0, cows);
         }
 
-
-        static void showTopList()
+        //Renamed from showTopList (small letter) for clarity
+        static void HighScore()
         {
             StreamReader input = new StreamReader("result.txt");
             List<PlayerData> results = new List<PlayerData>();
@@ -108,52 +122,64 @@ namespace MooGame
                 string[] nameAndScore = line.Split(new string[] { "#&#" }, StringSplitOptions.None);
                 string name = nameAndScore[0];
                 int guesses = Convert.ToInt32(nameAndScore[1]);
-                PlayerData pd = new PlayerData(name, guesses);
-                int pos = results.IndexOf(pd);
+                //Renamed from pd for clarity
+                PlayerData playerData = new PlayerData(name, guesses);
+                int pos = results.IndexOf(playerData);
                 if (pos < 0)
                 {
-                    results.Add(pd);
+                    results.Add(playerData);
                 }
                 else
                 {
-                    results[pos].Update(guesses);
+                    //Calling two separate methods now instead of one, breaking down responsabilities 
+                    results[pos].IncreaseNumberOfGuesses(guesses);
+                    results[pos].IncreaseNumberOfGames();
                 }
 
 
             }
             results.Sort((p1, p2) => p1.Average().CompareTo(p2.Average()));
             Console.WriteLine("Player   games average");
-            foreach (PlayerData p in results)
+            //Renamed from p to player for clarity
+            foreach (PlayerData player in results)
             {
-                Console.WriteLine(string.Format("{0,-9}{1,5:D}{2,9:F2}", p.Name, p.NGames, p.Average()));
+                Console.WriteLine(string.Format("{0,-9}{1,5:D}{2,9:F2}", player.Name, player.NumberOfGames, player.Average()));
             }
             input.Close();
         }
     }
 
+    // __________________________________________________________ CONTINUE HERE
     class PlayerData
     {
         public string Name { get; private set; }
-        public int NGames { get; private set; }
-        int totalGuess;
+        public int NumberOfGames { get; private set; }
+
+        //changed this to private for clarity
+        private int GuessesInTotal;
 
 
         public PlayerData(string name, int guesses)
         {
             this.Name = name;
-            NGames = 1;
-            totalGuess = guesses;
+            NumberOfGames = 1;
+            GuessesInTotal = guesses;
         }
 
-        public void Update(int guesses)
+        //Separated and renamed these into two methods, one thing doing one thing. 
+        public void IncreaseNumberOfGuesses(int guesses)
         {
-            totalGuess += guesses;
-            NGames++;
+            GuessesInTotal += guesses;
+        }
+
+        public void IncreaseNumberOfGames()
+        {
+            NumberOfGames++;
         }
 
         public double Average()
         {
-            return (double)totalGuess / NGames;
+            return (double)GuessesInTotal / NumberOfGames;
         }
 
 
