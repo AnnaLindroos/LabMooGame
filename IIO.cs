@@ -9,6 +9,6 @@ namespace LabMooGame;
 
 public interface IIO
 {
-    public void Read();
-    public void Write(string message);
+    string Read();
+    void Write(string message);
 }

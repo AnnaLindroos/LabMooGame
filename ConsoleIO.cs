@@ -8,13 +8,15 @@ namespace LabMooGame;
 
 public class ConsoleIO : IIO
 {
-    void IIO.Read()
+    public ConsoleIO() { }
+
+    public string Read()
     {
-        Console.ReadLine();
+        return Console.ReadLine() ?? "";
     }
 
-    void IIO.Write(string message)
+    public void Write(string message)
     {
-        throw new NotImplementedException();
+        Console.WriteLine(message);
     }
 }

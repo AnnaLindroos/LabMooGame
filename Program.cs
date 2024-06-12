@@ -1,6 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Collections.Generic;
+using LabMooGame;
+using System.Text;
+
+//Fokus namngivning och utbrytning
 
 namespace MooGame;
 
@@ -16,93 +20,90 @@ class MainClass
     // felhantering
     // clean tests
 
-    //Created interface for input/output called IIO
-    //Created ConsoleIO class using interface.
-
     public static void Main(string[] args)
     {
-        //Renamed from playOn to be more specific
-        bool playGame = true;
-        Console.WriteLine("Enter your user name:\n");
-        //Changed from "name" to userName for clarity
-        string userName = Console.ReadLine();
+        IIO userIO = new ConsoleIO();
 
+        bool playGame = true;
+        userIO.Write("Enter your user name:\n");
+        
+        string userName = userIO.Read();
 
         while (playGame)
         {
-            //Renamed to correctAnswer instead of makeGoal (small letter)
-            string correctAnswer = WinGame();
+            string correctAnswer = GenerateWinningSequence();
 
-            Console.WriteLine("New game:\n");
+            userIO.Write("New game:\n");
+
             //comment out or remove next line to play real games!
-            //Console.WriteLine("For practice, number is: " + correctAnswer + "\n");
+            Console.WriteLine("For practice, number is: " + correctAnswer + "\n");
 
-            //Renamed to userGuess for clarity
-            string userGuess = Console.ReadLine();
+            string userGuess = userIO.Read();
 
-            //Renamed to numberOfGuesses from nGuess for clarity
             int numberOfGuesses = 1;
-            //Renamed to bullsAndCows from bbcc for clarity
-            string bullsAndCows = CheckBullsAndCows(correctAnswer, userGuess);
-            Console.WriteLine(bullsAndCows + "\n");
+
+            string bullsAndCows = CheckUserGuess(correctAnswer, userGuess);
+            userIO.Write(bullsAndCows + "\n");
             while (bullsAndCows != "BBBB,")
             {
                 numberOfGuesses++;
-                userGuess = Console.ReadLine();
-                Console.WriteLine(userGuess + "\n");
-                bullsAndCows = CheckBullsAndCows(correctAnswer, userGuess);
-                Console.WriteLine(bullsAndCows + "\n");
+                userGuess = userIO.Read();
+                userIO.Write(userGuess + "\n");
+                bullsAndCows = CheckUserGuess(correctAnswer, userGuess);
+                userIO.Write(bullsAndCows + "\n");
             }
+
             StreamWriter output = new StreamWriter("result.txt", append: true);
             output.WriteLine(userName + "#&#" + numberOfGuesses);
             output.Close();
-            //Renamed to HighScore from showTopList for clarity
-            HighScore();
-            Console.WriteLine("Correct, it took " + numberOfGuesses + " guesses\nContinue?");
-            //renamed to keepPlaying from answer for clarity
-            string keepPlaying = Console.ReadLine();
+
+            DisplayHighScore();
+            userIO.Write($"Correct, it took {numberOfGuesses} guesses\nContinue?");
+        
+            string keepPlaying = userIO.Read();
             if (keepPlaying != null && keepPlaying != "" && keepPlaying.Substring(0, 1) == "n")
             {
                 playGame = false;
             }
         }
     }
-    static string WinGame()
+    // Refactored method
+    //RENAME TO GENERATENUMBERSEQUENCE 
+    static string GenerateWinningSequence()
     {
-        //Renamed to randomNumbers from randomGenerator
         Random randomNumbers = new Random();
-        //Renamed to correctAnswer from goal
-        string correctAnswer = "";
-        // Magic number, change to a constant int called max.
+
+        string correctAnswer = string.Empty;
         for (int i = 0; i < MAX; i++)
         {
-            //Changed to randomNumber from random
             int randomNumber = randomNumbers.Next(10);
-            //Changed to generatedNumberSequence from randomDigit
-            string generatedNumberSequence = "" + randomNumber;
+
+            string generatedNumberSequence = randomNumber.ToString();
             while (correctAnswer.Contains(generatedNumberSequence))
             {
                 randomNumber = randomNumbers.Next(10);
-                generatedNumberSequence = "" + randomNumber;
+                generatedNumberSequence = randomNumber.ToString();
             }
-            // shortened to correctAnswer += generatedNumberSequence from correctAnswer = correctAnswer + generatedNumberSequence;
             correctAnswer += generatedNumberSequence;
         }
         return correctAnswer;
     }
 
-    //Renamed to CheckBullsAndCows from checkBC (small letter at the start) for clarity
-    static string CheckBullsAndCows(string goal, string guess)
+    //Rename and refactored method
+    //handle error input
+    static string CheckUserGuess(string correctAnswer, string guess)
     {
         int cows = 0, bulls = 0;
+        //OBS felhantering här???? Är det del av uppgiften eller inte? Ändrar funktionalitet. FÅR lägga till try/catch
+        //if (guess.Length <4 || )
         guess += "    ";     // if player entered less than 4 chars
-        for (int i = 0; i < MAX; i++)
+        for (int answerIndex = 0; answerIndex < MAX; answerIndex++)
         {
-            for (int j = 0; j < MAX; j++)
+            for (int guessIndex = 0; guessIndex < MAX; guessIndex++)
             {
-                if (goal[i] == guess[j])
+                if (correctAnswer[answerIndex] == guess[guessIndex])
                 {
-                    if (i == j)
+                    if (answerIndex == guessIndex)
                     {
                         bulls++;
                     }
@@ -113,21 +114,26 @@ class MainClass
                 }
             }
         }
-        return "BBBB".Substring(0, bulls) + "," + "CCCC".Substring(0, cows);
+
+        String hintBulls = new('B', bulls);
+        String hintCows = new('C', cows);
+        StringBuilder hintResult = new();
+        return hintResult.Append(hintBulls).Append(',').Append(hintCows).ToString();
     }
 
-    //Renamed to HighScore from showTopList (small letter) for clarity
-    static void HighScore()
+    
+    static void DisplayHighScore()
     {
         StreamReader input = new StreamReader("result.txt");
         List<PlayerData> results = new List<PlayerData>();
+
         string line;
         while ((line = input.ReadLine()) != null)
         {
             string[] nameAndScore = line.Split(new string[] { "#&#" }, StringSplitOptions.None);
             string name = nameAndScore[0];
             int guesses = Convert.ToInt32(nameAndScore[1]);
-            //Renamed to playerData from pd for clarity
+
             PlayerData playerData = new PlayerData(name, guesses);
             int pos = results.IndexOf(playerData);
             if (pos < 0)
@@ -136,19 +142,16 @@ class MainClass
             }
             else
             {
-                //Calling two separate methods now instead of one, breaking down responsabilities 
-                results[pos].IncreaseNumberOfGuesses(guesses);
-                results[pos].IncreaseNumberOfGames();
+                results[pos].UpdateHighScoreBoard(guesses);
             }
-
-
         }
-        results.Sort((p1, p2) => p1.AverageGuesses().CompareTo(p2.AverageGuesses()));
+        results.Sort((p1, p2) => p1.GetAverageGuesses().CompareTo(p2.GetAverageGuesses()));
         Console.WriteLine("Player   games average");
-        //Renamed to player from p to player for clarity
+        
         foreach (PlayerData player in results)
         {
-            Console.WriteLine(string.Format("{0,-9}{1,5:D}{2,9:F2}", player.PlayerName, player.NumberOfGames, player.AverageGuesses()));
+            ///// OBS CONSOLE WRITELINE HERE
+            Console.WriteLine(string.Format("{0,-9}{1,5:D}{2,9:F2}", player.PlayerName, player.NumberOfGames, player.GetAverageGuesses()));
         }
         input.Close();
     }
@@ -156,16 +159,13 @@ class MainClass
 
 class PlayerData
 {
-    //Renamed to PlayerName from Name for clarity
     public string PlayerName { get; private set; }
-    //Renamed to NumberOfGames from NGames
+
     public int NumberOfGames { get; private set; }
 
-    //changed this to private for clarity. Renamed to GuessesInTotal from totalGuess (small letter)
     private int GuessesInTotal;
 
 
-    // renamed to playerName from name 
     public PlayerData(string playerName, int guesses)
     {
         this.PlayerName = playerName;
@@ -173,31 +173,24 @@ class PlayerData
         GuessesInTotal = guesses;
     }
 
-    //Separated and renamed these into two methods, one thing doing one thing. 
-    public void IncreaseNumberOfGuesses(int guesses)
+    public void UpdateHighScoreBoard(int guesses)
     {
         GuessesInTotal += guesses;
-    }
-
-    public void IncreaseNumberOfGames()
-    {
         NumberOfGames++;
     }
 
-    // Renamed to AverageGuesses from Average
-    public double AverageGuesses()
+    public double GetAverageGuesses()
     {
         return (double)GuessesInTotal / NumberOfGames;
     }
 
-
-    //Renamed method name to SamePlayer from Equals. Renamed object to player from p. Removed the override (not necessary after name refactoring)
-    public bool SamePlayer(Object player)
+    //BRO WHEN ARE THESE USED
+    public override bool Equals(Object player)
     {
         return PlayerName.Equals(((PlayerData)player).PlayerName);
     }
 
-    // Never used?
+    // WHEN USED?
     public override int GetHashCode()
     {
         return PlayerName.GetHashCode();
