@@ -13,6 +13,9 @@ class MainClass
 {
     const int MAX = 4;
 
+    // moving out into a variable to make less vulnerable for changes
+
+
     // naming
     // funktioner/metoder
     // kommentarer
@@ -31,6 +34,8 @@ class MainClass
 
         while (playGame)
         {
+            string filePath = "testresult.txt";
+
             string correctAnswer = GenerateWinningSequence();
 
             userIO.Write("New game:\n");
@@ -53,7 +58,7 @@ class MainClass
                 userIO.Write(bullsAndCows + "\n");
             }
 
-            StreamWriter output = new StreamWriter("result.txt", append: true);
+            StreamWriter output = new StreamWriter(filePath, append: true);
             output.WriteLine(userName + "#&#" + numberOfGuesses);
             output.Close();
 
@@ -121,10 +126,12 @@ class MainClass
         return hintResult.Append(hintBulls).Append(',').Append(hintCows).ToString();
     }
 
-    
+    // Static ?? or no? 
     static void DisplayHighScore()
     {
-        StreamReader input = new StreamReader("result.txt");
+        string filePath = "testresult.txt";
+
+        StreamReader input = new StreamReader(filePath);
         List<PlayerData> results = new List<PlayerData>();
 
         string line;
@@ -136,6 +143,7 @@ class MainClass
 
             PlayerData playerData = new PlayerData(name, guesses);
             int pos = results.IndexOf(playerData);
+
             if (pos < 0)
             {
                 results.Add(playerData);
@@ -151,12 +159,20 @@ class MainClass
         foreach (PlayerData player in results)
         {
             ///// OBS CONSOLE WRITELINE HERE
-            Console.WriteLine(string.Format("{0,-9}{1,5:D}{2,9:F2}", player.PlayerName, player.NumberOfGames, player.GetAverageGuesses()));
+            ///// Removed the D after "{1,5}" since number of games doesn't need to be in decimal format
+            ///// Also usin string interpolation to increase readability. 
+            ///KÄLLA: "String interpolation provides a more readable, convenient syntax to format strings. It's easier to read than string composite formatting. "
+            ///https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated
+
+            Console.WriteLine($"{player.PlayerName,-9}{player.NumberOfGames,5}{player.GetAverageGuesses(),9:F2}");
         }
         input.Close();
     }
+
+
 }
 
+// Class to store player related data
 class PlayerData
 {
     public string PlayerName { get; private set; }
