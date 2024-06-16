@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabMooGame;
+namespace LabMooGame.Interfaces;
 
 public interface IIO
 {
