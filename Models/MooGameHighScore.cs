@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LabMooGame.Models;
 //static or no????
-public class MooGameHighScore
+public class MooGameHighScore : IHighScore
 {
     private string _filePath;
     private StreamReader _input;
@@ -29,7 +29,7 @@ public class MooGameHighScore
         UpdateHighScoreBoard();
         SortHighScoreResults();
         DisplayHighScoreBoard();
-        _fileDetails.CloseFile(_input);
+        _input.Close();
     }
 
     public void UpdateHighScoreBoard()

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LabMooGame.Interfaces;
 
-public interface IFileDetails
+public interface IGoalGenerator
 {
-    string GetFilePath();
+    string GenerateWinningSequence();
 }

@@ -14,11 +14,6 @@ namespace LabMooGame.Models
         {
         }
 
-        public void CloseFile(StreamReader input)
-        {
-            input.Close();
-        }
-
         public string GetFilePath()
         {
             return _filePath;

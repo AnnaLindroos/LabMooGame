@@ -12,39 +12,133 @@ namespace LabMooGame.Controllers;
 // static?? 
 public class MooGameController : IGame
 {
-    private string _correctAnswer;
+    private const int MAXCharacters = 4;
 
     private IIO _userIO;
-
-    private bool _playGame;
-
     private IFileDetails _fileDetails;
-
     private IGoalGenerator _goalGenerator;
+    private IHighScore _mooGameHighScore;
+
+    private string _correctAnswer;
+    private bool _playGame;
+    private int _numberOfGuesses;
+
+    //OBS STREAMWRITERN ANVÄNDS SAMTIDIFGRT AV MOOGAMEHIGHSCORE OCH CONTROLLERN; HUR DELA PÅ DESSA? 
 
     //Dependency injection ist för hårt kopplat 
-    public MooGameController(IIO uiIO, IGoalGenerator goalGenerator, IFileDetails fileDetails)
+    public MooGameController(IIO userIO, IGoalGenerator goalGenerator, IFileDetails fileDetails, IHighScore mooGameHighScore)
     {
-        _correctAnswer = string.Empty;
-        _userIO = uiIO;
-        _playGame = true;
+        _userIO = userIO;
         _fileDetails = fileDetails;
         _goalGenerator = goalGenerator;
+        _correctAnswer = string.Empty;
+        _playGame = true;
+        _mooGameHighScore = mooGameHighScore;
     }
-
-    const int MAX = 4;
 
     public int numberOfGuesses = 0;
 
     public void PlayMooGame()
     {
         _userIO.Write("Enter your user name:\n");
-
         string userName = _userIO.Read();
 
         while (_playGame)
         {
-            numberOfGuesses = 1;
+
+            StartNewGame(userName);
+            PlayRound();
+            _mooGameHighScore.GetHighScoreBoard();
+
+            _userIO.Write($"Correct, it took {numberOfGuesses} guesses\nContinue?");
+
+            if (!UserWantsToContinue())
+            {
+                _playGame = false;
+            }
+        }
+    }
+
+    public void StartNewGame(string userName)
+    {
+        _numberOfGuesses = 0;
+        _correctAnswer = _goalGenerator.GenerateWinningSequence();
+
+        _userIO.Write("New game:\n");
+        _userIO.Write("For practice, number is: " + _correctAnswer + "\n");
+
+        string filePath = _fileDetails.GetFilePath();
+        using StreamWriter output = new StreamWriter(filePath, append: true);
+        output.WriteLine($"{userName}#&#{_numberOfGuesses}");
+        output.Close();
+    }
+
+    public void PlayRound()
+    {
+        while (true)
+        {
+            string userGuess = GetUserGuess();
+            string hint = GenerateHint(userGuess);
+
+            _userIO.Write(hint + "\n");
+            if (IsCorrectGuess(hint))
+            {
+                break;
+            }
+
+            _numberOfGuesses++;
+        }
+    }
+
+    public string GetUserGuess()
+    {
+        _userIO.Write("Enter your guess:\n");
+        return _userIO.Read();
+    }
+
+    public string GenerateHint(string guess)
+    {
+        int bulls = 0, cows = 0;
+        guess = guess.PadRight(MAXCharacters); // Ensure guess has at least 4 characters
+
+        for (int i = 0; i < MAXCharacters; i++)
+        {
+            for (int j = 0; j < MAXCharacters; j++)
+            {
+                if (_correctAnswer[i] == guess[j])
+                {
+                    if (i == j)
+                    {
+                        bulls++;
+                    }
+                    else
+                    {
+                        cows++;
+                    }
+                }
+            }
+        }
+
+        return new string('B', bulls) + "," + new string('C', cows);
+    }
+
+    public bool IsCorrectGuess(string hint)
+    {
+        return hint == "BBBB,";
+    }
+
+    public bool UserWantsToContinue()
+    {
+        string response = _userIO.Read();
+        return string.IsNullOrWhiteSpace(response) || response[0].ToString().ToLower() != "n";
+    }
+
+}
+
+
+
+
+/*numberOfGuesses = 1;
 
             string filePath = _fileDetails.GetFilePath();
 
@@ -52,7 +146,7 @@ public class MooGameController : IGame
 
             MooGameHighScore highScore = new();
 
-            _userIO.Write("New game:\n");
+            
 
             //comment out or remove next line to play real games!
             Console.WriteLine("For practice, number is: " + correctAnswer + "\n");
@@ -65,7 +159,7 @@ public class MooGameController : IGame
 
             highScore.GetHighScoreBoard();
 
-            _userIO.Write($"Correct, it took {numberOfGuesses} guesses\nContinue?");
+            
 
             string keepPlaying = _userIO.Read();
             if (keepPlaying != null && keepPlaying != "" && keepPlaying.Substring(0, 1) == "n")
@@ -75,7 +169,7 @@ public class MooGameController : IGame
         }
     }
   
-
+s
     public void HintBullsAndCows()
     {
         string userGuess = _userIO.Read();
@@ -121,40 +215,7 @@ public class MooGameController : IGame
         string hintCows = new('C', cows);
         StringBuilder hintResult = new();
         return hintResult.Append(hintBulls).Append(',').Append(hintCows).ToString();
-    }
-}
+    } 
+} */
 
-public class GoalGenerator : IGoalGenerator
-{
-    private int _goalLength;
 
-    public GoalGenerator(int goalLength)
-    {
-        _goalLength = goalLength;
-    }
-    public string GenerateWinningSequence()
-    {
-        Random randomNumbers = new Random();
-
-        string correctAnswer = string.Empty;
-
-        for (int i = 0; i < _goalLength; i++)
-        {
-            int randomNumber = randomNumbers.Next(10);
-
-            string generatedNumberSequence = randomNumber.ToString();
-            while (correctAnswer.Contains(generatedNumberSequence))
-            {
-                randomNumber = randomNumbers.Next(10);
-                generatedNumberSequence = randomNumber.ToString();
-            }
-            correctAnswer += generatedNumberSequence;
-        }
-        return correctAnswer;
-    }
-}
-
-public interface IGoalGenerator 
-{
-    string GenerateWinningSequence();
-}
