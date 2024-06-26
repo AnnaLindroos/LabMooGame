@@ -28,10 +28,10 @@ class MainClass
     {
         IGoalGenerator goalGenerator = new GoalGenerator(4);
         IIO uiIO = new ConsoleIO();
-        IFileDetails fileDetails = new FileDetails();
-        IHighScore mooGameHighScore = new MooGameHighScore();
+        IFileDetails fileDetails = new MooFileDetails();
         // LOGIK FÖR ATT VÄLJA ATT SPELA MOO ELLER MASTERMIND 
-        MooGameController mooGameController = new(uiIO, goalGenerator, fileDetails, mooGameHighScore);
+        MooGameController mooGameController = new(uiIO, goalGenerator, fileDetails);
+        IHighScore mooGameHighScore = new MooGameHighScore();
         mooGameController.PlayMooGame();
     }
 }

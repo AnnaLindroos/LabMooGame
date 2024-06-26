@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace LabMooGame.Models
 {
-    public class FileDetails : IFileDetails
+    public class MooFileDetails : IFileDetails
     {
-        public string _filePath = "testresult.txt";
-        public FileDetails() 
+        public string _filePath = "mooresult.txt";
+        public MooFileDetails() 
         {
         }
 

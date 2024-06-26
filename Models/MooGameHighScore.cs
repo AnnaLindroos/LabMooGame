@@ -10,16 +10,13 @@ namespace LabMooGame.Models;
 //static or no????
 public class MooGameHighScore : IHighScore
 {
-    private string _filePath;
-    private StreamReader _input;
     private List<PlayerData> _results;
     private IIO _userIO;
     private IFileDetails _fileDetails;
 
     public MooGameHighScore()
     {
-        _fileDetails = new FileDetails();
-        _input = new StreamReader(_fileDetails.GetFilePath());
+        _fileDetails = new MooFileDetails();
         _results = new();
         _userIO = new ConsoleIO();
     }
@@ -29,13 +26,13 @@ public class MooGameHighScore : IHighScore
         UpdateHighScoreBoard();
         SortHighScoreResults();
         DisplayHighScoreBoard();
-        _input.Close();
     }
 
     public void UpdateHighScoreBoard()
     {
+        StreamReader input = new StreamReader("mooresult.txt");
         string line;
-        while ((line = _input.ReadLine()) != null)
+        while ((line = input.ReadLine()) != null)
         {
             string[] nameAndScore = line.Split(new string[] { "#&#" }, StringSplitOptions.None);
             string name = nameAndScore[0];

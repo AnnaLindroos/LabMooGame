@@ -15,9 +15,10 @@ public class MooGameController : IGame
     private const int MAXCharacters = 4;
 
     private IIO _userIO;
-    private IFileDetails _fileDetails;
+    private IFileDetails _mooFileDetails;
     private IGoalGenerator _goalGenerator;
     private IHighScore _mooGameHighScore;
+    private StreamWriter _output;
 
     private string _correctAnswer;
     private bool _playGame;
@@ -26,17 +27,16 @@ public class MooGameController : IGame
     //OBS STREAMWRITERN ANVÄNDS SAMTIDIFGRT AV MOOGAMEHIGHSCORE OCH CONTROLLERN; HUR DELA PÅ DESSA? 
 
     //Dependency injection ist för hårt kopplat 
-    public MooGameController(IIO userIO, IGoalGenerator goalGenerator, IFileDetails fileDetails, IHighScore mooGameHighScore)
+    public MooGameController(IIO userIO, IGoalGenerator goalGenerator, IFileDetails mooFileDetails)
     {
         _userIO = userIO;
-        _fileDetails = fileDetails;
+        _mooFileDetails = mooFileDetails;
         _goalGenerator = goalGenerator;
         _correctAnswer = string.Empty;
         _playGame = true;
-        _mooGameHighScore = mooGameHighScore;
+        _output = new StreamWriter("mooresult.txt", append: true);
+        _mooGameHighScore = new MooGameHighScore();
     }
-
-    public int numberOfGuesses = 0;
 
     public void PlayMooGame()
     {
@@ -48,9 +48,10 @@ public class MooGameController : IGame
 
             StartNewGame(userName);
             PlayRound();
+            _numberOfGuesses++;
             _mooGameHighScore.GetHighScoreBoard();
 
-            _userIO.Write($"Correct, it took {numberOfGuesses} guesses\nContinue?");
+            _userIO.Write($"Correct, it took {_numberOfGuesses} guesses\nContinue?");
 
             if (!UserWantsToContinue())
             {
@@ -67,10 +68,9 @@ public class MooGameController : IGame
         _userIO.Write("New game:\n");
         _userIO.Write("For practice, number is: " + _correctAnswer + "\n");
 
-        string filePath = _fileDetails.GetFilePath();
-        using StreamWriter output = new StreamWriter(filePath, append: true);
-        output.WriteLine($"{userName}#&#{_numberOfGuesses}");
-        output.Close();
+        string filePath = _mooFileDetails.GetFilePath();
+        _output.WriteLine($"{userName}#&#{_numberOfGuesses}");
+        _output.Close();
     }
 
     public void PlayRound()
