@@ -13,29 +13,21 @@ namespace LabMooGame.Controllers;
 public class MooGameController : IGame
 {
     private const int MAXCharacters = 4;
-
     private IIO _userIO;
     private IFileDetails _mooFileDetails;
     private IGoalGenerator _goalGenerator;
     private IHighScore _mooGameHighScore;
-    private StreamWriter _output;
-
     private string _correctAnswer;
     private bool _playGame;
     private int _numberOfGuesses;
 
-    //OBS STREAMWRITERN ANVÄNDS SAMTIDIFGRT AV MOOGAMEHIGHSCORE OCH CONTROLLERN; HUR DELA PÅ DESSA? 
-
-    //Dependency injection ist för hårt kopplat 
     public MooGameController(IIO userIO, IGoalGenerator goalGenerator, IFileDetails mooFileDetails)
     {
         _userIO = userIO;
         _mooFileDetails = mooFileDetails;
         _goalGenerator = goalGenerator;
-        _correctAnswer = string.Empty;
-        _playGame = true;
-        _output = new StreamWriter("mooresult.txt", append: true);
         _mooGameHighScore = new MooGameHighScore();
+        _playGame = true;
     }
 
     public void PlayMooGame()
@@ -45,10 +37,10 @@ public class MooGameController : IGame
 
         while (_playGame)
         {
-
+            _numberOfGuesses = 0;
             StartNewGame(userName);
             PlayRound();
-            _numberOfGuesses++;
+            UpdateResults(userName);
             _mooGameHighScore.GetHighScoreBoard();
 
             _userIO.Write($"Correct, it took {_numberOfGuesses} guesses\nContinue?");
@@ -67,10 +59,6 @@ public class MooGameController : IGame
 
         _userIO.Write("New game:\n");
         _userIO.Write("For practice, number is: " + _correctAnswer + "\n");
-
-        string filePath = _mooFileDetails.GetFilePath();
-        _output.WriteLine($"{userName}#&#{_numberOfGuesses}");
-        _output.Close();
     }
 
     public void PlayRound()
@@ -78,6 +66,7 @@ public class MooGameController : IGame
         while (true)
         {
             string userGuess = GetUserGuess();
+            _numberOfGuesses++;
             string hint = GenerateHint(userGuess);
 
             _userIO.Write(hint + "\n");
@@ -85,8 +74,6 @@ public class MooGameController : IGame
             {
                 break;
             }
-
-            _numberOfGuesses++;
         }
     }
 
@@ -99,7 +86,7 @@ public class MooGameController : IGame
     public string GenerateHint(string guess)
     {
         int bulls = 0, cows = 0;
-        guess = guess.PadRight(MAXCharacters); // Ensure guess has at least 4 characters
+        guess = guess.PadRight(MAXCharacters);
 
         for (int i = 0; i < MAXCharacters; i++)
         {
@@ -133,89 +120,14 @@ public class MooGameController : IGame
         return string.IsNullOrWhiteSpace(response) || response[0].ToString().ToLower() != "n";
     }
 
+    private void UpdateResults(string userName)
+    {
+        using (StreamWriter output = new StreamWriter("mooresult.txt", append: true))
+        {
+            output.WriteLine($"{userName}#&#{_numberOfGuesses}");
+        }
+        _mooGameHighScore.UpdateHighScoreBoard();
+    }
 }
-
-
-
-
-/*numberOfGuesses = 1;
-
-            string filePath = _fileDetails.GetFilePath();
-
-            string correctAnswer = _goalGenerator.GenerateWinningSequence();
-
-            MooGameHighScore highScore = new();
-
-            
-
-            //comment out or remove next line to play real games!
-            Console.WriteLine("For practice, number is: " + correctAnswer + "\n");
-
-            HintBullsAndCows();
-
-            StreamWriter output = new StreamWriter(filePath, append: true);
-            output.WriteLine(userName + "#&#" + numberOfGuesses);
-            output.Close();
-
-            highScore.GetHighScoreBoard();
-
-            
-
-            string keepPlaying = _userIO.Read();
-            if (keepPlaying != null && keepPlaying != "" && keepPlaying.Substring(0, 1) == "n")
-            {
-                _playGame = false;
-            }
-        }
-    }
-  
-s
-    public void HintBullsAndCows()
-    {
-        string userGuess = _userIO.Read();
-        string bullsAndCows = CheckUserGuess(userGuess);
-        _userIO.Write(bullsAndCows + "\n");
-        while (bullsAndCows != "BBBB,")
-        {
-            numberOfGuesses++;
-            userGuess = _userIO.Read();
-            _userIO.Write(userGuess + "\n");
-            bullsAndCows = CheckUserGuess(userGuess);
-            _userIO.Write(bullsAndCows + "\n");
-        }
-    }
-
-
-    //handle error input
-    public string CheckUserGuess(string guess)
-    {
-        int cows = 0, bulls = 0;
-        //OBS felhantering här???? Är det del av uppgiften eller inte? Ändrar funktionalitet. FÅR lägga till try/catch
-        //if (guess.Length <4 || )
-        guess += "    ";     // if player entered less than 4 chars
-        for (int answerIndex = 0; answerIndex < MAX; answerIndex++)
-        {
-            for (int guessIndex = 0; guessIndex < MAX; guessIndex++)
-            {
-                if (_correctAnswer[answerIndex] == guess[guessIndex])
-                {
-                    if (answerIndex == guessIndex)
-                    {
-                        bulls++;
-                    }
-                    else
-                    {
-                        cows++;
-                    }
-                }
-            }
-        }
-
-        string hintBulls = new('B', bulls);
-        string hintCows = new('C', cows);
-        StringBuilder hintResult = new();
-        return hintResult.Append(hintBulls).Append(',').Append(hintCows).ToString();
-    } 
-} */
 
 

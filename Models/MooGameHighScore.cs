@@ -10,44 +10,42 @@ namespace LabMooGame.Models;
 //static or no????
 public class MooGameHighScore : IHighScore
 {
-    private List<PlayerData> _results;
+    private List<Player> _results;
     private IIO _userIO;
-    private IFileDetails _fileDetails;
 
     public MooGameHighScore()
     {
-        _fileDetails = new MooFileDetails();
-        _results = new();
+        _results = new List<Player>();
         _userIO = new ConsoleIO();
     }
 
     public void GetHighScoreBoard()
     {
-        UpdateHighScoreBoard();
         SortHighScoreResults();
         DisplayHighScoreBoard();
     }
 
     public void UpdateHighScoreBoard()
     {
-        StreamReader input = new StreamReader("mooresult.txt");
-        string line;
-        while ((line = input.ReadLine()) != null)
+        using (StreamReader input = new StreamReader("mooresult.txt"))
         {
-            string[] nameAndScore = line.Split(new string[] { "#&#" }, StringSplitOptions.None);
-            string name = nameAndScore[0];
-            int guesses = Convert.ToInt32(nameAndScore[1]);
-
-            PlayerData playerData = new PlayerData(name, guesses);
-            int playerIndex = _results.IndexOf(playerData);
-
-            if (playerIndex < 0)
+            string line;
+            while ((line = input.ReadLine()) != null)
             {
-                _results.Add(playerData);
-            }
-            else
-            {
-                _results[playerIndex].UpdatePlayerHighScore(guesses);
+                string[] nameAndScore = line.Split(new string[] { "#&#" }, StringSplitOptions.None);
+                string name = nameAndScore[0];
+                int guesses = Convert.ToInt32(nameAndScore[1]);
+                Player pd = new Player(name, guesses);
+                int pos = _results.IndexOf(pd);
+                if (pos < 0)
+                {
+                    _results.Add(pd);
+                }
+                else
+                {
+                    _results[pos].UpdatePlayerHighScore(guesses);
+                }
+
             }
         }
     }
@@ -61,14 +59,8 @@ public class MooGameHighScore : IHighScore
     {
         _userIO.Write("Player   games average");
 
-        foreach (PlayerData player in _results)
+        foreach (Player player in _results)
         {
-            ///// OBS CONSOLE WRITELINE HERE
-            ///// Removed the D after "{1,5}" since number of games doesn't need to be in decimal format
-            ///// Also usin string interpolation to increase readability. 
-            ///KÄLLA: "String interpolation provides a more readable, convenient syntax to format strings. It's easier to read than string composite formatting. "
-            ///https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated
-
             _userIO.Write($"{player.PlayerName,-9}{player.NumberOfGames,5}{player.GetAverageGuesses(),9:F2}");
         }
     }

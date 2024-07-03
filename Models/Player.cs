@@ -6,16 +6,15 @@ using System.Threading.Tasks;
 
 namespace LabMooGame.Models;
 
-public class PlayerData
+public class Player
 {
     public string PlayerName { get; private set; }
 
     public int NumberOfGames { get; private set; }
 
-    private int GuessesInTotal;
+    public int GuessesInTotal { get; private set; }
 
-
-    public PlayerData(string playerName, int guesses)
+    public Player(string playerName, int guesses)
     {
         PlayerName = playerName;
         NumberOfGames = 1;
@@ -36,7 +35,7 @@ public class PlayerData
     //BRO WHEN ARE THESE USED
     public override bool Equals(object player)
     {
-        return PlayerName.Equals(((PlayerData)player).PlayerName);
+        return PlayerName.Equals(((Player)player).PlayerName);
     }
 
     // WHEN USED?
