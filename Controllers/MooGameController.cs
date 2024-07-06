@@ -14,43 +14,49 @@ public class MooGameController : IGame
 {
     private const int MAXCharacters = 4;
     private IIO _userIO;
-    private IFileDetails _mooFileDetails;
     private IGoalGenerator _goalGenerator;
     private IHighScore _mooGameHighScore;
     private string _correctAnswer;
-    private bool _playGame;
     private int _numberOfGuesses;
 
-    public MooGameController(IIO userIO, IGoalGenerator goalGenerator, IFileDetails mooFileDetails)
+    public MooGameController(IIO userIO, IGoalGenerator goalGenerator, IHighScore mooGameHighScore)
     {
         _userIO = userIO;
-        _mooFileDetails = mooFileDetails;
         _goalGenerator = goalGenerator;
-        _mooGameHighScore = new MooGameHighScore();
-        _playGame = true;
+        _mooGameHighScore = mooGameHighScore;
     }
 
     public void PlayMooGame()
     {
         _userIO.Write("Enter your user name:\n");
         string userName = _userIO.Read();
+        bool playGame = true;
 
-        while (_playGame)
+        while (playGame)
         {
-            _numberOfGuesses = 0;
             StartNewGame(userName);
             PlayRound();
-            UpdateResults(userName);
+            MakeGameResultsFile(userName);
             _mooGameHighScore.GetHighScoreBoard();
 
             _userIO.Write($"Correct, it took {_numberOfGuesses} guesses\nContinue?");
 
             if (!UserWantsToContinue())
             {
-                _playGame = false;
+                playGame = false;
             }
         }
     }
+
+    public void MakeGameResultsFile(string userName)
+    {
+        using (StreamWriter output = new StreamWriter("mooresult.txt", append: true))
+        {
+            output.WriteLine($"{userName}#&#{_numberOfGuesses}");
+            output.Close();
+        }
+    }
+
 
     public void StartNewGame(string userName)
     {
@@ -83,16 +89,16 @@ public class MooGameController : IGame
         return _userIO.Read();
     }
 
-    public string GenerateHint(string guess)
+    public string GenerateHint(string userGuess)
     {
         int bulls = 0, cows = 0;
-        guess = guess.PadRight(MAXCharacters);
+        userGuess = userGuess.PadRight(MAXCharacters);
 
         for (int i = 0; i < MAXCharacters; i++)
         {
             for (int j = 0; j < MAXCharacters; j++)
             {
-                if (_correctAnswer[i] == guess[j])
+                if (_correctAnswer[i] == userGuess[j])
                 {
                     if (i == j)
                     {
@@ -120,14 +126,6 @@ public class MooGameController : IGame
         return string.IsNullOrWhiteSpace(response) || response[0].ToString().ToLower() != "n";
     }
 
-    private void UpdateResults(string userName)
-    {
-        using (StreamWriter output = new StreamWriter("mooresult.txt", append: true))
-        {
-            output.WriteLine($"{userName}#&#{_numberOfGuesses}");
-        }
-        _mooGameHighScore.UpdateHighScoreBoard();
-    }
 }
 
 
