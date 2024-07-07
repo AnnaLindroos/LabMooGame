@@ -26,10 +26,10 @@ class MainClass
 
     public static void Main(string[] args)
     {
-        IGoalGenerator goalGenerator = new GoalGenerator(4);
+        // LOGIK FÖR ATT VÄLJA ATT SPELA MOO ELLER MASTERMIND 
+        IGoalGenerator goalGenerator = new GoalGenerator(MAX);
         IIO uiIO = new ConsoleIO();
         IFileDetails fileDetails = new MooFileDetails();
-        // LOGIK FÖR ATT VÄLJA ATT SPELA MOO ELLER MASTERMIND 
         IHighScore mooGameHighScore = new MooGameHighScore();
         MooGameController mooGameController = new(uiIO, goalGenerator, mooGameHighScore);
         mooGameController.PlayMooGame();

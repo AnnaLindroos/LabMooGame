@@ -8,9 +8,7 @@ namespace LabMooGame.Interfaces;
 
 public interface IHighScore
 {
-    void GetHighScoreBoard();
     void UpdateHighScoreBoard();
     void SortHighScoreResults();
     void DisplayHighScoreBoard();
-
 }

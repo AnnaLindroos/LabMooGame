@@ -10,43 +10,38 @@ namespace LabMooGame.Models;
 //static or no????
 public class MooGameHighScore : IHighScore
 {
-    private List<Player> _results;
     private IIO _userIO;
+    private List<Player> _results;
 
     public MooGameHighScore()
     {
-        _results = new List<Player>();
         _userIO = new ConsoleIO();
-    }
-
-    public void GetHighScoreBoard()
-    {
-        UpdateHighScoreBoard();
-        DisplayHighScoreBoard();
     }
 
     public void UpdateHighScoreBoard()
     {
-        using (StreamReader input = new StreamReader("mooresult.txt"))
+        StreamReader input = new StreamReader("mooresult.txt");
+        List<Player> results = new List<Player>();
+        string line;
+        while ((line = input.ReadLine()) != null)
         {
-            string line;
-            while ((line = input.ReadLine()) != null)
+            string[] playerNameAndScore = line.Split(new string[] { "#&#" }, StringSplitOptions.None);
+            string playerName = playerNameAndScore[0];
+            int guesses = Convert.ToInt32(playerNameAndScore[1]);
+
+            Player playerData = new Player(playerName, guesses);
+            int pos = results.IndexOf(playerData);
+            if (pos < 0)
             {
-                string[] playerNameAndScore = line.Split(new string[] { "#&#" }, StringSplitOptions.None);
-                string playerName = playerNameAndScore[0];
-                int guesses = Convert.ToInt32(playerNameAndScore[1]);
-                Player playerData = new Player(playerName, guesses);
-                int pos = _results.IndexOf(playerData);
-                if (pos < 0)
-                {
-                    _results.Add(playerData);
-                }
-                else
-                {
-                    _results[pos].UpdatePlayerHighScore(guesses);
-                }
+                results.Add(playerData);
+            }
+            else
+            {
+                results[pos].UpdatePlayerHighScore(guesses);
             }
         }
+        _results = results;
+        input.Close();
     }
 
     public void DisplayHighScoreBoard()

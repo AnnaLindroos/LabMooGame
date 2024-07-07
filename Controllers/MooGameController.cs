@@ -37,7 +37,8 @@ public class MooGameController : IGame
             StartNewGame(userName);
             PlayRound();
             MakeGameResultsFile(userName);
-            _mooGameHighScore.GetHighScoreBoard();
+            _mooGameHighScore.UpdateHighScoreBoard();
+            _mooGameHighScore.DisplayHighScoreBoard();
 
             _userIO.Write($"Correct, it took {_numberOfGuesses} guesses\nContinue?");
 
@@ -50,11 +51,10 @@ public class MooGameController : IGame
 
     public void MakeGameResultsFile(string userName)
     {
-        using (StreamWriter output = new StreamWriter("mooresult.txt", append: true))
-        {
-            output.WriteLine($"{userName}#&#{_numberOfGuesses}");
-            output.Close();
-        }
+
+        StreamWriter output = new StreamWriter("mooresult.txt", append: true);
+        output.WriteLine($"{userName}#&#{_numberOfGuesses}");
+        output.Close();
     }
 
 
@@ -125,7 +125,6 @@ public class MooGameController : IGame
         string response = _userIO.Read();
         return string.IsNullOrWhiteSpace(response) || response[0].ToString().ToLower() != "n";
     }
-
 }
 
 
