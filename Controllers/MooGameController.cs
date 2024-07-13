@@ -16,17 +16,19 @@ public class MooGameController : IGame
     private IIO _userIO;
     private IGoalGenerator _goalGenerator;
     private IHighScore _mooGameHighScore;
+    private IFileDetails _mooFileDetails;
     private string _correctAnswer;
     private int _numberOfGuesses;
 
-    public MooGameController(IIO userIO, IGoalGenerator goalGenerator, IHighScore mooGameHighScore)
+    public MooGameController(IIO userIO, IGoalGenerator goalGenerator, IHighScore mooGameHighScore, IFileDetails mooFileDetails)
     {
         _userIO = userIO;
         _goalGenerator = goalGenerator;
         _mooGameHighScore = mooGameHighScore;
+        _mooFileDetails = mooFileDetails;
     }
 
-    public void PlayMooGame()
+    public void PlayGame()
     {
         _userIO.Write("Enter your user name:\n");
         string userName = _userIO.Read();
@@ -52,7 +54,8 @@ public class MooGameController : IGame
     public void MakeGameResultsFile(string userName)
     {
 
-        StreamWriter output = new StreamWriter("mooresult.txt", append: true);
+        //StreamWriter output = new StreamWriter("mooresult.txt", append: true);
+        StreamWriter output = new StreamWriter(_mooFileDetails.GetFilePath(), append: true);
         output.WriteLine($"{userName}#&#{_numberOfGuesses}");
         output.Close();
     }

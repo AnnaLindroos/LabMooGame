@@ -11,28 +11,19 @@ using LabMooGame.Controllers;
 namespace MooGame;
 
 //Remove Mainclass?
-class MainClass
+class Program
 {
-    const int MAX = 4;
-
-    // moving out into a variable to make less vulnerable for changes
-
-    // naming
-    // funktioner/metoder
-    // KOMMENTARER
-    // klasser
-    // FELHANTERING
-    // CLEAN TESTS
-
     public static void Main(string[] args)
     {
+        const int MAX = 4;
+
         // LOGIK FÖR ATT VÄLJA ATT SPELA MOO ELLER MASTERMIND 
         IGoalGenerator goalGenerator = new GoalGenerator(MAX);
         IIO uiIO = new ConsoleIO();
-        IFileDetails fileDetails = new MooFileDetails();
-        IHighScore mooGameHighScore = new MooGameHighScore();
-        MooGameController mooGameController = new(uiIO, goalGenerator, mooGameHighScore);
-        mooGameController.PlayMooGame();
+        IFileDetails mooFileDetails = new MooFileDetails();
+        IHighScore mooGameHighScore = new MooGameHighScore(mooFileDetails);
+        MooGameController mooGameController = new(uiIO, goalGenerator, mooGameHighScore, mooFileDetails);
+        mooGameController.PlayGame();
     }
 }
 

@@ -9,9 +9,10 @@ namespace LabMooGame.Models
 {
     public class MooFileDetails : IFileDetails
     {
-        public string _filePath = "mooresult.txt";
+        public string _filePath;
         public MooFileDetails() 
         {
+            _filePath = "mooresult.txt";
         }
 
         public string GetFilePath()

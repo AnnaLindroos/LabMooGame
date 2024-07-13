@@ -12,15 +12,18 @@ public class MooGameHighScore : IHighScore
 {
     private IIO _userIO;
     private List<Player> _results;
+    private IFileDetails _mooFileDetails;
 
-    public MooGameHighScore()
+    public MooGameHighScore(IFileDetails mooFileDetails)
     {
         _userIO = new ConsoleIO();
+        _mooFileDetails = mooFileDetails;
     }
 
     public void UpdateHighScoreBoard()
     {
-        StreamReader input = new StreamReader("mooresult.txt");
+        //StreamReader input = new StreamReader("mooresult.txt");
+        StreamReader input = new StreamReader(_mooFileDetails.GetFilePath());
         List<Player> results = new List<Player>();
         string line;
         while ((line = input.ReadLine()) != null)
