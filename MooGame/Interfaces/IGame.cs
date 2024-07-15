@@ -4,16 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabMooGame.Interfaces;
+namespace LabMooGame.MooGame.Interfaces;
 
 public interface IGame
 {
     void PlayGame();
-    void MakeGameResultsFile(string userName);
     void StartNewGame(string userName);
     void PlayRound();
     string GetUserGuess();
     string GenerateHint(string userGuess);
+    void MakeGameResultsFile(string userName);
     bool IsCorrectGuess(string hint);
     bool UserWantsToContinue();
 }

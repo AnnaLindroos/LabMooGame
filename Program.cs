@@ -2,9 +2,9 @@
 using System.IO;
 using System.Collections.Generic;
 using System.Text;
-using LabMooGame.Interfaces;
-using LabMooGame.Models;
-using LabMooGame.Controllers;
+using LabMooGame.MooGame.Models;
+using LabMooGame.MooGame.Controllers;
+using LabMooGame.MooGame.Interfaces;
 
 //Fokus namngivning och utbrytning
 

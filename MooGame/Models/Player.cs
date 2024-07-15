@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabMooGame.Models;
+namespace LabMooGame.MooGame.Models;
 
 public class Player
 {

@@ -4,12 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using LabMooGame.Interfaces;
-using LabMooGame.Models;
+using LabMooGame.MooGame.Models;
+using LabMooGame.MooGame.Interfaces;
 
-namespace LabMooGame.Controllers;
+namespace LabMooGame.MooGame.Controllers;
 
-// static?? 
 public class MooGameController : IGame
 {
     private const int MAXCharacters = 4;

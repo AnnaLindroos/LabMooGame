@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LabMooGame.Interfaces;
+using LabMooGame.MooGame.Interfaces;
 
-namespace LabMooGame.Models;
+namespace LabMooGame.MooGame.Models;
 
 public class ConsoleIO : IIO
 {

@@ -1,12 +1,13 @@
-﻿using LabMooGame.Interfaces;
+﻿using LabMooGame.MooGame.Interfaces;
 using MooGame;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabMooGame.Models;
+namespace LabMooGame.MooGame.Models;
 //static or no????
 public class MooGameHighScore : IHighScore
 {
@@ -52,6 +53,12 @@ public class MooGameHighScore : IHighScore
         SortHighScoreResults();
 
         _userIO.Write("Player   games average");
+
+        //Removed the D after "{1,5}" since number of games doesn't need to be in decimal format
+        ///// Also usin string interpolation to increase readability. 
+        ///KÄLLA: "String interpolation provides a more readable, convenient syntax to format strings. 
+        ///It's easier to read than string composite formatting. "
+        ///https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/tokens/interpolated
 
         foreach (Player player in _results)
         {
