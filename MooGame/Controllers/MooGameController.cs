@@ -50,16 +50,6 @@ public class MooGameController : IGame
         }
     }
 
-    public void MakeGameResultsFile(string userName)
-    {
-
-        //StreamWriter output = new StreamWriter("mooresult.txt", append: true);
-        StreamWriter output = new StreamWriter(_mooFileDetails.GetFilePath(), append: true);
-        output.WriteLine($"{userName}#&#{_numberOfGuesses}");
-        output.Close();
-    }
-
-
     public void StartNewGame(string userName)
     {
         _numberOfGuesses = 0;
@@ -120,6 +110,15 @@ public class MooGameController : IGame
     public bool IsCorrectGuess(string hint)
     {
         return hint == "BBBB,";
+    }
+
+    public void MakeGameResultsFile(string userName)
+    {
+
+        //StreamWriter output = new StreamWriter("mooresult.txt", append: true);
+        StreamWriter output = new StreamWriter(_mooFileDetails.GetFilePath(), append: true);
+        output.WriteLine($"{userName}#&#{_numberOfGuesses}");
+        output.Close();
     }
 
     public bool UserWantsToContinue()

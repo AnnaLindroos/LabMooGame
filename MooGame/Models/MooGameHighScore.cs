@@ -54,7 +54,6 @@ public class MooGameHighScore : IHighScore
 
         _userIO.Write("Player   games average");
 
-        //Removed the D after "{1,5}" since number of games doesn't need to be in decimal format
         ///// Also usin string interpolation to increase readability. 
         ///KÄLLA: "String interpolation provides a more readable, convenient syntax to format strings. 
         ///It's easier to read than string composite formatting. "
