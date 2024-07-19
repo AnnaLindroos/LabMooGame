@@ -12,7 +12,7 @@ namespace LabMooGame.MooGame.Models
         public string _filePath;
         public MooFileDetails()
         {
-            _filePath = "mooresult.txt";
+            _filePath = "hellotestresult.txt";
         }
 
         public string GetFilePath()

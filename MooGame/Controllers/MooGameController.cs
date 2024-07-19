@@ -16,7 +16,7 @@ public class MooGameController : IGame
     private IGoalGenerator _goalGenerator;
     private IHighScore _mooGameHighScore;
     private IFileDetails _mooFileDetails;
-    private string _correctAnswer;
+    private string _winningSequence;
     private int _numberOfGuesses;
 
     public MooGameController(IIO userIO, IGoalGenerator goalGenerator, IHighScore mooGameHighScore, IFileDetails mooFileDetails)
@@ -38,7 +38,7 @@ public class MooGameController : IGame
             StartNewGame(userName);
             PlayRound();
             MakeGameResultsFile(userName);
-            _mooGameHighScore.UpdateHighScoreBoard();
+            _mooGameHighScore.GetPlayerResults();
             _mooGameHighScore.DisplayHighScoreBoard();
 
             _userIO.Write($"Correct, it took {_numberOfGuesses} guesses\nContinue?");
@@ -53,10 +53,10 @@ public class MooGameController : IGame
     public void StartNewGame(string userName)
     {
         _numberOfGuesses = 0;
-        _correctAnswer = _goalGenerator.GenerateWinningSequence();
+        _winningSequence = _goalGenerator.GenerateWinningSequence();
 
         _userIO.Write("New game:\n");
-        _userIO.Write("For practice, number is: " + _correctAnswer + "\n");
+        _userIO.Write("For practice, number is: " + _winningSequence + "\n");
     }
 
     public void PlayRound()
@@ -90,7 +90,7 @@ public class MooGameController : IGame
         {
             for (int j = 0; j < MAXCharacters; j++)
             {
-                if (_correctAnswer[i] == userGuess[j])
+                if (_winningSequence[i] == userGuess[j])
                 {
                     if (i == j)
                     {
@@ -103,7 +103,6 @@ public class MooGameController : IGame
                 }
             }
         }
-
         return new string('B', bulls) + "," + new string('C', cows);
     }
 
@@ -114,11 +113,10 @@ public class MooGameController : IGame
 
     public void MakeGameResultsFile(string userName)
     {
-
-        //StreamWriter output = new StreamWriter("mooresult.txt", append: true);
-        StreamWriter output = new StreamWriter(_mooFileDetails.GetFilePath(), append: true);
-        output.WriteLine($"{userName}#&#{_numberOfGuesses}");
-        output.Close();
+        using (StreamWriter output = new StreamWriter(_mooFileDetails.GetFilePath(), append: true))
+        {
+            output.WriteLine($"{userName}#&#{_numberOfGuesses}");
+        }
     }
 
     public bool UserWantsToContinue()
