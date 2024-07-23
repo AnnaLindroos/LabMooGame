@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using LabMooGame.MooGame.Models;
 using LabMooGame.MooGame.Interfaces;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LabMooGame.MooGame.Controllers;
 
@@ -59,26 +60,43 @@ public class MooGameController : IGame
         _userIO.Write("For practice, number is: " + _winningSequence + "\n");
     }
 
+    // Catches exceptions specific to the game round logic, such as errors in processing guesses.
     public void PlayRound()
     {
         while (true)
         {
-            string userGuess = GetUserGuess();
-            _numberOfGuesses++;
-            string hint = GenerateHint(userGuess);
-
-            _userIO.Write(hint + "\n");
-            if (IsCorrectGuess(hint))
+            try
             {
-                break;
+                string userGuess = GetUserGuess();
+                _numberOfGuesses++;
+                string hint = GenerateHint(userGuess);
+
+                _userIO.Write(hint + "\n");
+                if (IsCorrectGuess(hint))
+                {
+                    break;
+                }
+            }
+            catch (Exception ex)
+            {
+                _userIO.Write($"Error processing your guess: {ex.Message}\n");
             }
         }
     }
 
+    // Captures exceptions when reading user input to ensure a smooth experience even if input fails.
     public string GetUserGuess()
     {
-        _userIO.Write("Enter your guess:\n");
-        return _userIO.Read();
+        try
+        {
+            _userIO.Write("Enter your guess:\n");
+            return _userIO.Read();
+        }
+        catch (Exception ex)
+        {
+            _userIO.Write($"Error reading your guess: {ex.Message}\n");
+            return string.Empty;
+        }
     }
 
     public string GenerateHint(string userGuess)
@@ -111,18 +129,35 @@ public class MooGameController : IGame
         return hint == "BBBB,";
     }
 
+    // Handles exceptions related to file operations, such as file access issues.
     public void MakeGameResultsFile(string userName)
     {
-        using (StreamWriter output = new StreamWriter(_mooFileDetails.GetFilePath(), append: true))
+        try
         {
-            output.WriteLine($"{userName}#&#{_numberOfGuesses}");
+            using (StreamWriter output = new StreamWriter(_mooFileDetails.GetFilePath(), append: true))
+            {
+                output.WriteLine($"{userName}#&#{_numberOfGuesses}");
+            }
+        }
+        catch (Exception e)
+        {
+            _userIO.Write($"Error writing to the results file: {e.Message}\n");
         }
     }
 
+    // Catches errors when reading user responses, ensuring that even if an error occurs, the game can continue gracefully.
     public bool UserWantsToContinue()
     {
-        string response = _userIO.Read();
-        return string.IsNullOrWhiteSpace(response) || response[0].ToString().ToLower() != "n";
+        try
+        {
+            string response = _userIO.Read();
+            return string.IsNullOrWhiteSpace(response) || response[0].ToString().ToLower() != "n";
+        }
+        catch (Exception ex)
+        {
+            _userIO.Write($"Error reading your response: {ex.Message}\n");
+            return false;
+        }
     }
 }
 
