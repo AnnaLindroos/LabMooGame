@@ -5,19 +5,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabMooGame.MooGame.Models
-{
-    public class MooFileDetails : IFileDetails
-    {
-        public string _filePath;
-        public MooFileDetails()
-        {
-            _filePath = "hellotestresult.txt";
-        }
+namespace LabMooGame.MooGame.Models;
 
-        public string GetFilePath()
-        {
-            return _filePath;
-        }
+public class MooFileDetails : IFileDetails
+{
+    public string _filePath;
+    public MooFileDetails()
+    {
+        _filePath = "hellotestresult.txt";
+    }
+
+    public string GetFilePath()
+    {
+        return _filePath;
     }
 }

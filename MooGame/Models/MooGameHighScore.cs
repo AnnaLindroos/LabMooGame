@@ -59,7 +59,7 @@ public class MooGameHighScore : IHighScore
     }
 
 
-    private void ProcessPlayerData(string line, List<Player> results)
+    public void ProcessPlayerData(string line, List<Player> results)
     {
         try
         {
