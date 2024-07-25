@@ -1,4 +1,4 @@
-﻿using LabMooGame.MooGame.Interfaces;
+﻿using LabMooGame.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,11 +6,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LabMooGame.MooGame.Models;
-public class GoalGenerator : IGoalGenerator
+public class MooGameGoalGenerator : IGoalGenerator
 {
     private int _goalLength;
 
-    public GoalGenerator(int goalLength)
+    public MooGameGoalGenerator(int goalLength)
     {
         _goalLength = goalLength;
     }

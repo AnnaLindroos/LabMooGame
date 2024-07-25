@@ -1,4 +1,4 @@
-﻿using LabMooGame.MooGame.Interfaces;
+﻿using LabMooGame.Interfaces;
 using MooGame;
 using System;
 using System.Collections.Generic;
@@ -16,7 +16,7 @@ namespace LabMooGame.MooGame.Models;
 public class MooGameHighScore : IHighScore
 {
     private IIO _userIO;
-    private List<Player> _results;
+    private List<MooGamePlayer> _results;
     private IFileDetails _mooFileDetails;
 
     public MooGameHighScore(IFileDetails mooFileDetails)
@@ -37,9 +37,9 @@ public class MooGameHighScore : IHighScore
         }
     }
 
-    private List<Player> ReadPlayerDataFromFile()
+    private List<MooGamePlayer> ReadPlayerDataFromFile()
     {
-        List<Player> results = new List<Player>();
+        List<MooGamePlayer> results = new List<MooGamePlayer>();
         try
         {
             using (StreamReader input = new StreamReader(_mooFileDetails.GetFilePath()))
@@ -59,7 +59,7 @@ public class MooGameHighScore : IHighScore
     }
 
 
-    public void ProcessPlayerData(string line, List<Player> results)
+    public void ProcessPlayerData(string line, List<MooGamePlayer> results)
     {
         try
         {
@@ -81,10 +81,10 @@ public class MooGameHighScore : IHighScore
     }
 
 
-    // Checks if the player data is already in the list. If not, adds it; otherwise, updates the player's high score.
-    private void UpdatePlayerResults(List<Player> results, string playerName, int guesses)
+    // Kollar om spelarens data redan finns i listan. Om inte så läggs datan till, annars uppdateras spelarens befintliga highscore. 
+    private void UpdatePlayerResults(List<MooGamePlayer> results, string playerName, int guesses)
     {
-        Player playerData = new Player(playerName, guesses);
+        MooGamePlayer playerData = new MooGamePlayer(playerName, guesses);
         int pos = results.IndexOf(playerData);
         if (pos < 0)
         {
@@ -102,9 +102,9 @@ public class MooGameHighScore : IHighScore
         {
             SortHighScoreResults();
 
-            _userIO.Write("Player   games average");
+            _userIO.Write("MooGamePlayer   games average");
 
-            foreach (Player player in _results)
+            foreach (MooGamePlayer player in _results)
             {
                 _userIO.Write($"{player.PlayerName,-9}{player.NumberOfGames,5}{player.GetAverageGuesses(),9:F2}");
             }

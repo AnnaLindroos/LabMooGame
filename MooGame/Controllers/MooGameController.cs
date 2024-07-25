@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using LabMooGame.MooGame.Models;
-using LabMooGame.MooGame.Interfaces;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using LabMooGame.Interfaces;
 
 namespace LabMooGame.MooGame.Controllers;
 
@@ -28,10 +28,8 @@ public class MooGameController : IGame
         _mooFileDetails = mooFileDetails;
     }
 
-    public void PlayGame()
+    public void PlayGame(string userName)
     {
-        _userIO.Write("Enter your user name:\n");
-        string userName = _userIO.Read();
         bool playGame = true;
 
         while (playGame)
@@ -77,26 +75,19 @@ public class MooGameController : IGame
                     break;
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _userIO.Write($"Error processing your guess: {ex.Message}\n");
+                _userIO.Write($"Error processing your guess: {e.Message}\n");
             }
         }
     }
 
-    // Captures exceptions when reading user input to ensure a smooth experience even if input fails.
     public string GetUserGuess()
     {
-        try
-        {
-            _userIO.Write("Enter your guess:\n");
-            return _userIO.Read();
-        }
-        catch (Exception ex)
-        {
-            _userIO.Write($"Error reading your guess: {ex.Message}\n");
-            return string.Empty;
-        }
+
+        _userIO.Write("Enter your guess:\n");
+        return _userIO.Read();
+  
     }
 
     public string GenerateHint(string userGuess)
@@ -129,7 +120,6 @@ public class MooGameController : IGame
         return hint == "BBBB,";
     }
 
-    // Handles exceptions related to file operations, such as file access issues.
     public void MakeGameResultsFile(string userName)
     {
         try
@@ -145,7 +135,6 @@ public class MooGameController : IGame
         }
     }
 
-    // Catches errors when reading user responses, ensuring that even if an error occurs, the game can continue gracefully.
     public bool UserWantsToContinue()
     {
         try
@@ -153,9 +142,9 @@ public class MooGameController : IGame
             string response = _userIO.Read();
             return string.IsNullOrWhiteSpace(response) || response[0].ToString().ToLower() != "n";
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            _userIO.Write($"Error reading your response: {ex.Message}\n");
+            _userIO.Write($"Error reading your response: {e.Message}\n");
             return false;
         }
     }

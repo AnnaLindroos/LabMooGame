@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using LabMooGame.MooGame.Interfaces;
+using LabMooGame.Interfaces;
 
-namespace LabMooGame.MooGame.Models;
+namespace LabMooGame;
 
 public class ConsoleIO : IIO
 {
@@ -19,5 +19,10 @@ public class ConsoleIO : IIO
     public void Write(string message)
     {
         Console.WriteLine(message);
+    }
+
+    public void WriteLine(string message)
+    {
+        Console.WriteLine($"{message}\n");
     }
 }

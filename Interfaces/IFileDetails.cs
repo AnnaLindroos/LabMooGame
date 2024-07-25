@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LabMooGame.MooGame.Interfaces;
+namespace LabMooGame.Interfaces;
 
-public interface IGoalGenerator
+public interface IFileDetails
 {
-    string GenerateWinningSequence();
+    string GetFilePath();
 }

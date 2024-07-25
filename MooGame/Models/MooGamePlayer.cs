@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LabMooGame.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LabMooGame.MooGame.Models;
 
-public class Player
+public class MooGamePlayer : IPlayer
 {
     public string PlayerName { get; private set; }
 
@@ -14,7 +15,7 @@ public class Player
 
     public int GuessesInTotal { get; private set; }
 
-    public Player(string playerName, int guesses)
+    public MooGamePlayer(string playerName, int guesses)
     {
         PlayerName = playerName;
         NumberOfGames = 1;
@@ -35,7 +36,7 @@ public class Player
     //BRO WHEN ARE THESE USED
     public override bool Equals(object player)
     {
-        return PlayerName.Equals(((Player)player).PlayerName);
+        return PlayerName.Equals(((MooGamePlayer)player).PlayerName);
     }
 
     // WHEN USED?

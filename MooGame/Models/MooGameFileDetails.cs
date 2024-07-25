@@ -1,4 +1,4 @@
-﻿using LabMooGame.MooGame.Interfaces;
+﻿using LabMooGame.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace LabMooGame.MooGame.Models;
 
-public class MooFileDetails : IFileDetails
+public class MooGameFileDetails : IFileDetails
 {
     public string _filePath;
-    public MooFileDetails()
+    public MooGameFileDetails()
     {
-        _filePath = "hellotestresult.txt";
+        _filePath = "hellomoogameresult.txt";
     }
 
     public string GetFilePath()
