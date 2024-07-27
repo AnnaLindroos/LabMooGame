@@ -8,7 +8,7 @@ namespace LabMooGame.Interfaces;
 
 public interface IGame
 {
-    void PlayGame();
+    void PlayGame(string userName);
     void StartNewGame(string userName);
     void PlayRound();
     string GetUserGuess();

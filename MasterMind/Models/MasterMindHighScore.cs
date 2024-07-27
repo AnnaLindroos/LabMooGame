@@ -1,28 +1,23 @@
 ﻿using LabMooGame.Interfaces;
-using MooGame;
+using LabMooGame.MooGame.Models;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Reflection.Metadata;
-using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
-namespace LabMooGame.MooGame.Models;
-//static or no????
-public class MooGameHighScore : IHighScore
+namespace LabMooGame.MasterMind.Models;
+
+public class MasterMindHighScore : IHighScore
 {
     private IIO _userIO;
-    private List<MooGamePlayer> _results;
-    private IFileDetails _mooFileDetails;
+    private List<MasterMindPlayer> _results;
+    private IFileDetails _masterMindFileDetails;
 
-    public MooGameHighScore(IFileDetails mooFileDetails)
+    public MasterMindHighScore(IFileDetails masterMindFileDetails)
     {
         _userIO = new ConsoleIO();
-        _mooFileDetails = mooFileDetails;
+        _masterMindFileDetails = masterMindFileDetails;
     }
 
     public void GetPlayerResults()
@@ -37,12 +32,12 @@ public class MooGameHighScore : IHighScore
         }
     }
 
-    private List<MooGamePlayer> ReadPlayerDataFromFile()
+    private List<MasterMindPlayer> ReadPlayerDataFromFile()
     {
-        List<MooGamePlayer> results = new List<MooGamePlayer>();
+        List<MasterMindPlayer> results = new List<MasterMindPlayer>();
         try
         {
-            using (StreamReader input = new StreamReader(_mooFileDetails.GetFilePath()))
+            using (StreamReader input = new StreamReader(_masterMindFileDetails.GetFilePath()))
             {
                 string line;
                 while ((line = input.ReadLine()) != null)
@@ -59,7 +54,7 @@ public class MooGameHighScore : IHighScore
     }
 
 
-    public void ProcessPlayerData(string line, List<MooGamePlayer> results)
+    public void ProcessPlayerData(string line, List<MasterMindPlayer> results)
     {
         try
         {
@@ -82,9 +77,9 @@ public class MooGameHighScore : IHighScore
 
 
     // Kollar om spelarens data redan finns i listan. Om inte så läggs datan till, annars uppdateras spelarens befintliga highscore. 
-    private void UpdatePlayerResults(List<MooGamePlayer> results, string playerName, int guesses)
+    private void UpdatePlayerResults(List<MasterMindPlayer> results, string playerName, int guesses)
     {
-        MooGamePlayer playerData = new MooGamePlayer(playerName, guesses);
+        MasterMindPlayer playerData = new MasterMindPlayer(playerName, guesses);
         int pos = results.IndexOf(playerData);
         if (pos < 0)
         {
@@ -104,7 +99,7 @@ public class MooGameHighScore : IHighScore
 
             _userIO.Write("Player   games average");
 
-            foreach (MooGamePlayer player in _results)
+            foreach (MasterMindPlayer player in _results)
             {
                 _userIO.Write($"{player.PlayerName,-9}{player.NumberOfGames,5}{player.GetAverageGuesses(),9:F2}");
             }

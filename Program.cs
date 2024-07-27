@@ -4,6 +4,7 @@ using LabMooGame;
 using LabMooGame.Interfaces;
 using System.Runtime.InteropServices;
 using LabMooGame.MasterMind.Models;
+using LabMooGame.MasterMind.Controllers;
 
 namespace MooGame;
 
@@ -16,7 +17,7 @@ class Program
         userIO.Write("Enter your user name:\n");
         string userName = userIO.Read();
 
-        userIO.Write("Welcome! Please choose which game you want to play: \n1. MooGame \n2.MasterMind");
+        userIO.Write("Welcome! Please choose which game you want to play: \n1. MooGame \n2. MasterMind");
 
         string answer = userIO.Read().ToUpper();
         switch (answer)
@@ -51,7 +52,9 @@ class Program
         {
             IGoalGenerator goalGenerator = new MasterMindGoalGenerator(MAX);
             IFileDetails masterMindFileDetails = new MasterMindFileDetails();
-            //IHighScore masterMindHighScore = new
+            IHighScore masterMindHighScore = new MasterMindHighScore(masterMindFileDetails);
+            MasterMindController masterMindController = new(userIO, goalGenerator, masterMindHighScore, masterMindFileDetails);
+            masterMindController.PlayGame(userName);
         }
     }
 }

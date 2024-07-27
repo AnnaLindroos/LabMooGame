@@ -1,31 +1,28 @@
-﻿using System;
+﻿using LabMooGame.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Xml.Linq;
-using LabMooGame.MooGame.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using LabMooGame.Interfaces;
 
-namespace LabMooGame.MooGame.Controllers;
+namespace LabMooGame.MasterMind.Controllers;
 
-public class MooGameController : IGame
+public class MasterMindController : IGame
 {
     private const int MAXCharacters = 4;
     private IIO _userIO;
     private IGoalGenerator _goalGenerator;
-    private IHighScore _mooGameHighScore;
-    private IFileDetails _mooFileDetails;
+    private IHighScore _masterMindHighScore;
+    private IFileDetails _masterMindFileDetails;
     private string _winningSequence;
     private int _numberOfGuesses;
 
-    public MooGameController(IIO userIO, IGoalGenerator goalGenerator, IHighScore mooGameHighScore, IFileDetails mooFileDetails)
+    public MasterMindController(IIO userIO, IGoalGenerator goalGenerator, IHighScore masterMindHighScore, IFileDetails masterMindFileDetails)
     {
         _userIO = userIO;
         _goalGenerator = goalGenerator;
-        _mooGameHighScore = mooGameHighScore;
-        _mooFileDetails = mooFileDetails;
+        _masterMindHighScore = masterMindHighScore;
+        _masterMindFileDetails = masterMindFileDetails;
     }
 
     public void PlayGame(string userName)
@@ -37,8 +34,8 @@ public class MooGameController : IGame
             StartNewGame(userName);
             PlayRound();
             MakeGameResultsFile(userName);
-            _mooGameHighScore.GetPlayerResults();
-            _mooGameHighScore.DisplayHighScoreBoard();
+            _masterMindHighScore.GetPlayerResults();
+            _masterMindHighScore.DisplayHighScoreBoard();
 
             _userIO.Write($"Correct, it took {_numberOfGuesses} guesses\nContinue?");
 
@@ -54,7 +51,7 @@ public class MooGameController : IGame
         _numberOfGuesses = 0;
         _winningSequence = _goalGenerator.GenerateWinningSequence();
 
-        _userIO.Write("New game of Moo:\n");
+        _userIO.Write("New game of MasterMind:\n");
         _userIO.Write("For practice, number is: " + _winningSequence + "\n");
     }
 
@@ -87,7 +84,7 @@ public class MooGameController : IGame
 
         _userIO.Write("Enter your guess:\n");
         return _userIO.Read();
-  
+
     }
 
     public string GenerateHint(string userGuess)
@@ -117,14 +114,14 @@ public class MooGameController : IGame
 
     public bool IsCorrectGuess(string hint)
     {
-        return hint == "BBBB,";
+        return hint == "BBBBBB,";
     }
 
     public void MakeGameResultsFile(string userName)
     {
         try
         {
-            using (StreamWriter output = new StreamWriter(_mooFileDetails.GetFilePath(), append: true))
+            using (StreamWriter output = new StreamWriter(_masterMindFileDetails.GetFilePath(), append: true))
             {
                 output.WriteLine($"{userName}#&#{_numberOfGuesses}");
             }
@@ -149,5 +146,4 @@ public class MooGameController : IGame
         }
     }
 }
-
 
