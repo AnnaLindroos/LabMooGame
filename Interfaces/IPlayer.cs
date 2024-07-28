@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace LabMooGame.Interfaces;
 
-internal interface IPlayer
+public interface IPlayer
 {
+    string PlayerName { get; set; }
+    int NumberOfGames { get; set; }
+    int GuessesInTotal { get; set; }
     void UpdatePlayerHighScore(int guesses);
     double GetAverageGuesses();
     bool Equals(object player);
