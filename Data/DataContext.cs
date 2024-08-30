@@ -48,7 +48,6 @@ public class DataContext : IDataContext
         return filePath;
     }
 
-    //"TÄNK OM" Testa om spelaren redan finns i listan eller inte, isf åtgärda
     public List<Player> ReadPlayerDataFromFile(bool isMooGame)
     {
         string filePath = GetFilePath(isMooGame);

@@ -28,6 +28,7 @@ public class MooGameLogic : IGameLogic
     public string GenerateHint(string userGuess)
     {
         int bulls = 0, cows = 0;
+
         //Added input padding to ensure the guess has at least four characters.
         userGuess = userGuess.PadRight(MAXCharacters);
 
