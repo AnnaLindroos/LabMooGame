@@ -1,10 +1,9 @@
-﻿namespace LabMooGame.Data
+﻿namespace LabMooGame.Data;
+
+public static class DataContextConfigCreator
 {
-    public static class DataContextConfigCreator
+    public static DataContextConfig CreateConfig()
     {
-        public static DataContextConfig CreateConfig()
-        {
-            return new DataContextConfig("moohighscores", "mastermindhighscores");
-        }
+        return new DataContextConfig("moohighscores", "mastermindhighscores");
     }
 }

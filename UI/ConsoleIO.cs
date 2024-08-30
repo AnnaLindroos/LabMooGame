@@ -11,13 +11,8 @@ public class ConsoleIO : IIO
         return Console.ReadLine() ?? "";
     }
 
-    public void Write(string message)
-    {
-        Console.WriteLine(message);
-    }
-
     public void WriteLine(string message)
     {
-        Console.WriteLine($"{message}\n");
+        Console.WriteLine(message);
     }
 }
