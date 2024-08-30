@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using LabMooGame.Interfaces;
+﻿using LabMooGame.Interfaces;
 
-namespace LabMooGame;
+namespace LabMooGame.UI;
 
 public class ConsoleIO : IIO
 {

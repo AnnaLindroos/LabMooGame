@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using LabMooGame.Models;
 
 namespace LabMooGame.Interfaces;
 
 public interface IHighScore
 {
-    void GetPlayerResults();
+    void GetPlayerResults(bool isMooGame);
     void SortHighScoreResults();
-    void DisplayHighScoreBoard();
+    List<Player> GetHighScoreBoard();
 }
